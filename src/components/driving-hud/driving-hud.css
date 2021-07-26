@@ -1,7 +1,5 @@
 .driving-hud {
   width: 200px;
-  display: flex;
-  flex-direction: row;
 }
 .driving-hud > div {
   margin: 0 3px;

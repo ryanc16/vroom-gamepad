@@ -19,19 +19,21 @@ export default class DrivingHud extends Component<any, DrivingHudState> {
     return (
       <Fragment>
         <Gamepad onAxisChange={this.onAxisChangeHandler}><div/></Gamepad>
-        <div className="driving-hud">
+        <div className="driving-hud flex-col">
           <div>
             <Steering axisX={this.state.steering.axisX} axisY={this.state.steering.axisY} />
           </div>
-          <div className="flex-col flex-end">
-            <Throttle percent={this.state.braking} />
-            <br/>
-            <div>Braking</div>
-          </div>
-          <div className="flex-col flex-end">
-            <Throttle percent={this.state.throttle} />
-            <br/>
-            <div>Throttle</div>
+          <div className="flex-row flex-center">
+            <div className="flex-col flex-end">
+              <Throttle percent={this.state.braking} />
+              <br/>
+              <div>Braking</div>
+            </div>
+            <div className="flex-col flex-end">
+              <Throttle percent={this.state.throttle} />
+              <br/>
+              <div>Throttle</div>
+            </div>
           </div>
         </div>
       </Fragment>
