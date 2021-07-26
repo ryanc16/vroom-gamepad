@@ -1,7 +1,7 @@
 import { Component, Fragment } from 'react';
 import './driving-hud.css';
 import Gamepad from 'react-gamepad';
-import Throttle from '../throttle/throttle';
+import Pedal from '../pedal/pedal';
 import Steering from '../steering/steering';
 
 export default class DrivingHud extends Component<any, DrivingHudState> {
@@ -23,15 +23,13 @@ export default class DrivingHud extends Component<any, DrivingHudState> {
           <div>
             <Steering axisX={this.state.steering.axisX} axisY={this.state.steering.axisY} />
           </div>
-          <div className="flex-row flex-center">
-            <div className="flex-col flex-end">
-              <Throttle percent={this.state.braking} />
-              <br/>
+          <div className="flex-row flex-evenly">
+            <div className="flex-col flex-center">
+              <Pedal percent={this.state.braking} />
               <div>Braking</div>
             </div>
-            <div className="flex-col flex-end">
-              <Throttle percent={this.state.throttle} />
-              <br/>
+            <div className="flex-col flex-center">
+              <Pedal percent={this.state.throttle} />
               <div>Throttle</div>
             </div>
           </div>

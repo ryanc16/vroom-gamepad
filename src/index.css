@@ -31,6 +31,10 @@ code {
   align-items: center;
 }
 
+.flex-evenly {
+  justify-content: space-evenly;
+}
+
 .flex-end {
   justify-content: flex-end;
   align-items: flex-end;
