@@ -1,0 +1,20 @@
+.throttle {
+  width: 100%;
+  background: linear-gradient(90deg, rgba(103,194,96,1) 0%, rgba(207,186,77,1) 75%, rgba(209,67,67,1) 100%);
+  border: solid 1px gray;
+  position: relative;
+  transform: rotate(-90deg);
+}
+
+.throttle .clip {
+  background-color: lightgray;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  transition: all 0.1s linear;
+}
+
+.throttle, .throttle .clip {
+  height: 2em;
+}
