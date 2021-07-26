@@ -35,9 +35,15 @@ export default class Steering extends Component<SteeringProps> {
   }
 
   private calculateThumbPosition(axisX: number, axisY: number, maxRadius: number) {
-    const phi = Math.atan2(axisY, axisX);
-    const adjustedAxisX = Math.pow(axisX, 2) * Math.cos(phi);
-    const adjustedAxisY = Math.pow(axisY, 2) * Math.sin(phi);
+
+    let adjustedAxisX = axisX;
+    let adjustedAxisY = axisY;
+    const magnitude = Math.sqrt(Math.pow(axisX, 2) + Math.pow(axisY, 2));
+    if (magnitude > 1) {
+      const theta = Math.atan2(axisY, axisX);
+      adjustedAxisY = Math.sin(theta);
+      adjustedAxisX = Math.cos(theta);
+    }
 
     const offset = (100 - maxRadius)/2;
     const overlap = offset + 10;
