@@ -1,6 +1,7 @@
 import { Component } from "react";
 import './steering.css';
 import steeringWheelPng from './steeringwheel.png';
+import drawnWheel1Png from './drawnWheel1.png';
 
 export default class Steering extends Component<SteeringProps> {
 
@@ -17,7 +18,7 @@ export default class Steering extends Component<SteeringProps> {
 
   private renderSteeringWheel() {
     const style = this.calculateSteeringWheelRotation(this.props.axisX);
-    return <img alt="steeringwheel" className="wheel" style={style} src={steeringWheelPng} />
+    return <img alt="steeringwheel" className="wheel" style={style} src={drawnWheel1Png} />
   }
 
   private renderThumbStick() {
@@ -35,25 +36,28 @@ export default class Steering extends Component<SteeringProps> {
   }
 
   private calculateThumbPosition(axisX: number, axisY: number, maxRadius: number) {
-
     let adjustedAxisX = axisX;
     let adjustedAxisY = axisY;
+
     const magnitude = Math.sqrt(Math.pow(axisX, 2) + Math.pow(axisY, 2));
+    // outside the Unit Circle
     if (magnitude > 1) {
-      const theta = Math.atan2(axisY, axisX);
+      const theta = Math.atan2(axisY, axisX); // find the angle
+
+      // given a hypotenuse (c) of 1, find the a and b legs of the inscribed triangle
       adjustedAxisY = Math.sin(theta);
       adjustedAxisX = Math.cos(theta);
     }
 
-    const offset = (100 - maxRadius)/2;
-    const overlap = offset + 10;
+    const offset = (100 - maxRadius) / 2; // offset of the top left corner to represent the (0,0) point in coordinate space
+    const overlap = offset + 10; // small extra distance. gives the element the appearance of an analog stick
 
     const left = offset + (adjustedAxisX * overlap) + '%';
-    const top  = offset + (adjustedAxisY * -overlap) + '%';
+    const top  = offset + (adjustedAxisY * overlap * -1) + '%'; // negative here flips the y represented in the coordinate plane, to the y in px units
     return { left, top };
   }
-
 }
+
 interface SteeringProps {
   axisX: number;
   axisY: number;

@@ -1,8 +1,10 @@
 import { Component, Fragment } from 'react';
 import './driving-hud.css';
 import Gamepad from 'react-gamepad';
+import ControllerConstants from '../../constants/controller-constants';
 import Pedal from '../pedal/pedal';
 import Steering from '../steering/steering';
+import Gague from '../gague/gague';
 
 export default class DrivingHud extends Component<any, DrivingHudState> {
 
@@ -44,17 +46,20 @@ export default class DrivingHud extends Component<any, DrivingHudState> {
               {this.printCustomControls()}
             </div>
           </div>
+          <div>
+            <Gague percent={this.state.throttle} />
+          </div>
         </div>
       </Fragment>
     )
   }
 
-  private onAxisChangeHandler = (axisName: string, value: number) => {
-    if (axisName === 'RightTrigger') {
+  onAxisChangeHandler = (axisName: string, value: number) => {
+    if (axisName === ControllerConstants.RightTrigger) {
       this.setState({throttle: value});
-    } else if (axisName === 'LeftTrigger') {
+    } else if (axisName === ControllerConstants.LeftTrigger) {
       this.setState({braking: value});
-    } else if (axisName === 'LeftStickX') {
+    } else if (axisName === ControllerConstants.LeftStickX) {
       this.setState((previousState, props) => {
         return {
           steering: {
@@ -63,7 +68,7 @@ export default class DrivingHud extends Component<any, DrivingHudState> {
           }
         };
       });
-    } else if (axisName === 'LeftStickY') {
+    } else if (axisName === ControllerConstants.LeftStickY) {
       this.setState((previousState, props) => {
         return {
           steering: {
