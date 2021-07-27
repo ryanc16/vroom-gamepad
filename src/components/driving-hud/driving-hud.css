@@ -1,6 +1,11 @@
 .driving-hud {
-  width: 200px;
+  width: 325px;
+  opacity: 0.7;
 }
 .driving-hud > div {
   margin: 0 3px;
+}
+
+.custom-control {
+  /* color: white; */
 }
