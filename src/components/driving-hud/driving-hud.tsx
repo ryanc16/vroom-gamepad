@@ -1,10 +1,9 @@
 import { Component, Fragment } from 'react';
-import './driving-hud.css';
 import Gamepad from 'react-gamepad';
 import ControllerConstants from '../../constants/controller-constants';
-import Pedal from '../pedal/pedal';
-import Steering from '../steering/steering';
 import Gauge from '../gauge/gauge';
+import Steering from '../steering/steering';
+import './driving-hud.css';
 
 export default class DrivingHud extends Component<any, DrivingHudState> {
 
@@ -23,22 +22,8 @@ export default class DrivingHud extends Component<any, DrivingHudState> {
         <Gamepad onAxisChange={this.onAxisChangeHandler}><div/></Gamepad>
         <div className="driving-hud flex-row">
           <div className="flex-col">
-            <div>
-              <Gauge throttle={this.state.throttle} braking={this.state.braking} />
-            </div>
-            <div>
-              <Steering axisX={this.state.steering.axisX} axisY={this.state.steering.axisY} />
-            </div>
-            <div className="flex-row flex-evenly">
-              <div className="flex-col flex-center">
-                <Pedal percent={this.state.braking} />
-                <div>Braking</div>
-              </div>
-              <div className="flex-col flex-center">
-                <Pedal percent={this.state.throttle} />
-                <div>Throttle</div>
-              </div>
-            </div>
+            <Gauge throttle={this.state.throttle} braking={this.state.braking} />
+            <Steering axisX={this.state.steering.axisX} axisY={this.state.steering.axisY} />
           </div>
         </div>
       </Fragment>
