@@ -1,16 +1,18 @@
-
 .gauge {
   position: relative;
-  height: 150px;
+  height: 25px;
 }
 
-.fill, .background {
+.background, .fill {
   position: absolute;
-  height: 100%;
-  top: 0;
-  left: 0;
+  width: 225px;
 }
 
 .fill {
   transition: all 0.1s linear;
+}
+
+.braking {
+  top: 15px;
+  width: 77%;
 }

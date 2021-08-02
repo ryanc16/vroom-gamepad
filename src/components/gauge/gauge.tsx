@@ -11,8 +11,8 @@ export default class Gauge extends Component<GaugeProps> {
     return(
       <div className="gauge">
         <img alt="gaugeBackground" className="background" src={gaugeBackgroundPng} />
-        <img alt="gaugeThrottleFill" className="fill" style={this.getFillClipRect(this.props.throttle)} src={gaugeThrottleFillPng} />
-        <img alt="gaugeBrakingFill" className="fill" style={this.getFillClipRect(this.props.braking)} src={gaugeBrakingFillPng} />
+        {<img alt="gaugeThrottleFill" className="fill throttle" style={this.getFillClipRect(this.props.throttle)} src={gaugeThrottleFillPng} />}
+        {<img alt="gaugeBrakingFill" className="fill braking" style={this.getFillClipRect(this.props.braking)} src={gaugeBrakingFillPng} />}
       </div>
     );
   }
