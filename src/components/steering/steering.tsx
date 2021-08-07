@@ -1,6 +1,5 @@
 import { Component } from "react";
 import './steering.css';
-import steeringWheelPng from './steeringwheel.png';
 import drawnWheel1Png from './drawnWheel1.png';
 
 export default class Steering extends Component<SteeringProps> {
