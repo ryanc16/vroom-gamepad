@@ -13,6 +13,16 @@
   border-radius: 4px;
 }
 
-.details {
+.setting {
   padding: 5px;
+  width: 100%;
+}
+
+.setting label {
+  display: block;
+}
+
+.wheel-color label {
+  display: inline;
+  margin-right: 5px;
 }

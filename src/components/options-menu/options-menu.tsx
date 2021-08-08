@@ -13,26 +13,33 @@ export default class OptionsMenu extends Component {
           <input className="wheel-url-input" type="text" placeholder="Wheel Asset Url" />
         </div>
 
-        <details>
-          <summary>Wheel Color:</summary>
+        <div className="setting wheel-color">
+          <label>Wheel Color:</label>
           { this.renderColorOptions('wheelColor', ColorOption) }
-        </details>
-
-        <details>
-          <summary>Analog Stick Fill Opacity:</summary>
-          { this.renderColorOptions('analogStickFillOpacity', AnalogStickSize) }
-        </details>
+        </div>
 
         <div className="flex-row">
-          <details>
-            <summary>Analog Stick Fill Color:</summary>
-            { this.renderColorOptions('analogStickFillColor', ColorOption) }
-          </details>
+          <div className="setting">
+            <label>Analog Stick Fill Opacity:</label>
+            <input className="opacity" type="number" />
+          </div>
 
-          <details>
-            <summary>Analog Stick Border Color:</summary>
+          <div className="setting">
+            <label>Analog Stick Fill Opacity:</label>
+            { this.renderColorOptions('analogStickSize', AnalogStickSize) }
+          </div>
+        </div>
+
+        <div className="flex-row">
+          <div className="setting">
+            <label>Analog Stick Fill Color:</label>
+            { this.renderColorOptions('analogStickFillColor', ColorOption) }
+          </div>
+
+          <div className="setting">
+            <label>Analog Stick Border Color:</label>
             { this.renderColorOptions('analogStickBorderColor', ColorOption) }
-          </details>
+          </div>
         </div>
       </div>
     );
@@ -43,17 +50,22 @@ export default class OptionsMenu extends Component {
 
     const list = Object.entries(options).filter(([key, value]) => value && key.charCodeAt(0) > 57).map(([key, value]) => {
       return (
-        <div className="color-option">
-          <input type="radio" name={name} id={name} value={value} ></input>
-          <label htmlFor={value.toString()}> {key} </label>
-        </div>
+        <option value={value}>{key}</option>
+        // <div className="color-option">
+        //   <select name={name}>
+        //     <option value={value}>{key}</option>
+        //   </select>
+
+        //   <input type="radio" name={name} id={name} value={value} ></input>
+        //   <label htmlFor={value.toString()}> {key} </label>
+        // </div>
       );
     });
 
     return (
-      <div className="color-option-list">
+      <select name={name} className="color-option-list">
         { list }
-      </div>
+      </select>
     )
   }
 
