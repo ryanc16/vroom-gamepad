@@ -1,16 +1,37 @@
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import './App.css';
 import DrivingHud from './components/driving-hud/driving-hud';
+import OptionsMenu from './components/options-menu/options-menu';
 import { AppOptions, ColorOption, getOptionsFromUrl } from './services/url-options.service';
 
-export default class App extends Component {
+export default class App extends Component<any, AppState> {
 
   appOptions!: AppOptions;
+
+  state = {
+    showOptionsMenu: false,
+  }
 
   constructor(props: any) {
     super(props);
     this.appOptions = getOptionsFromUrl();
     this.setAppOptions();
+  }
+
+  componentWillMount() {
+    document.addEventListener("keyup", this.onKeyUp.bind(this));
+  }
+
+  onKeyUp(e: KeyboardEvent) {
+    console.log('e', e);
+    if(e.key === 'Escape') {
+      console.log('Escape');
+      this.setState((previousState, props) => {
+        return {
+          showOptionsMenu: !previousState.showOptionsMenu,
+        };
+      });
+    }
   }
 
   setAppOptions() {
@@ -25,9 +46,20 @@ export default class App extends Component {
 
   render() {
     return (
-      <DrivingHud />
+      <Fragment >
+        <div className="app flex-row"> 
+          <DrivingHud />
+          { this.state.showOptionsMenu && 
+            <OptionsMenu />
+          }
+        </div>
+      </Fragment>
     );
   }
+}
+
+interface AppState {
+  showOptionsMenu: boolean;
 }
 
 function setProperty(root: HTMLElement, name: string, value: string) {

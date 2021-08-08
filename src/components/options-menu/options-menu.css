@@ -1,0 +1,18 @@
+.options-menu {
+  min-width: 400px;
+  border: 1px solid #333;
+  border-radius: 6px;
+
+  margin-left: 10px;
+  padding: 10px;
+}
+
+.wheel-url-input {
+  width: 100%;
+  border: 1px solid black;
+  border-radius: 4px;
+}
+
+.details {
+  padding: 5px;
+}
