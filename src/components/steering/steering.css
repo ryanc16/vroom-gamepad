@@ -1,13 +1,13 @@
 .steering {
-  width: 200px;
-  height: 200px;
+  width: 800px;
+  height: 800px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .wheel {
-  width: 200px;
+  width: 800px;
   transition: all 0.4s ease-out;
   position: absolute;
   z-index: -1;
@@ -28,8 +28,9 @@
 
 .stick-thumb {
   position: absolute;
-  background-color: #333;
-  border: solid 2px yellow;
+  background-color: var(--analogStickFillColor);
+  opacity: var(--analogStickFillOpacity);
+  border: solid 5px var(--analogStickBorderColor);
   border-radius: 50%;
   transition: all 0.1s linear;
 }

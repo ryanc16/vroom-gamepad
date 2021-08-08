@@ -1,6 +1,7 @@
 import { Component, Fragment } from 'react';
 import Gamepad from 'react-gamepad';
 import ControllerConstants from '../../constants/controller-constants';
+import { AppOptions, getOptionsFromUrl } from '../../services/url-options.service';
 import Gauge from '../gauge/gauge';
 import Steering from '../steering/steering';
 import './driving-hud.css';
@@ -16,14 +17,22 @@ export default class DrivingHud extends Component<any, DrivingHudState> {
     }
   };
 
+  appOptions!: AppOptions; 
+
+  constructor(props: any) {
+    super(props);
+    this.appOptions = getOptionsFromUrl();
+  }
+
   render() {
+
     return (
       <Fragment >
         <Gamepad onAxisChange={this.onAxisChangeHandler}><div/></Gamepad>
         <div className="driving-hud flex-row">
           <div className="flex-col">
             <Gauge throttle={this.state.throttle} braking={this.state.braking} />
-            <Steering axisX={this.state.steering.axisX} axisY={this.state.steering.axisY} />
+            <Steering axisX={this.state.steering.axisX} axisY={this.state.steering.axisY} analogStickSize={this.appOptions.analogStickSize} />
           </div>
         </div>
       </Fragment>

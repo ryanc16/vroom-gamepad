@@ -1,12 +1,16 @@
 import { Component } from "react";
 import './steering.css';
 import drawnWheel1Png from './drawnWheel1.png';
+import { AnalogStickSize } from "../../services/url-options.service";
+
 
 export default class Steering extends Component<SteeringProps> {
 
-  private readonly thumbSizePercent: number = 70;
+  private thumbSizePercent: number = AnalogStickSize.Large;
 
   render() {
+    if(this.props.analogStickSize) this.thumbSizePercent = this.props.analogStickSize;
+
     return(
       <div className="steering">
         {this.renderSteeringWheel()}
@@ -60,4 +64,6 @@ export default class Steering extends Component<SteeringProps> {
 interface SteeringProps {
   axisX: number;
   axisY: number;
+
+  analogStickSize: AnalogStickSize;
 }
