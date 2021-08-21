@@ -23,7 +23,6 @@ export default class App extends Component<any, AppState> {
   }
 
   onKeyUp(e: KeyboardEvent) {
-    console.log('e', e);
     if(e.key === 'Escape') {
       console.log('Escape');
       this.setState((previousState, props) => {

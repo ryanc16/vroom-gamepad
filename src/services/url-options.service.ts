@@ -28,8 +28,8 @@ enum UrlColorOption {
 
 export enum AnalogStickSize {
   None = 0,
-  Large = 70,
   Small = 40,
+  Large = 70,
 }
 
 export interface AppOptions {
