@@ -1,66 +1,73 @@
-import { Component, Fragment } from 'react';
-import './App.css';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import './App.scss';
 import DrivingHud from './components/driving-hud/driving-hud';
 import OptionsMenu from './components/options-menu/options-menu';
-import { AppOptions, ColorOption, getOptionsFromUrl } from './services/url-options.service';
+import { AnalogStickSize, AppOptions, ColorOption, getOptionsFromUrl } from './services/url-options.service';
 
-export default class App extends Component<any, AppState> {
+const defaultOptions: AppOptions = {
+  wheelImgUrl: '',
+  wheelColor: ColorOption.None,
+  analogStickBorderColor: ColorOption.Black,
+  analogStickFillColor: ColorOption.Gray,
+  analogStickFillOpacity: 0.4,
+  analogStickSize: AnalogStickSize.Small
+}
 
-  appOptions!: AppOptions;
+export default function App(): React.ReactElement {
 
-  state = {
-    showOptionsMenu: false,
-  }
+  const [showOptionsMenu, setShowOptionsMenu] = useState<boolean>(false);
+  const [appOptions, setAppOptions] = useState<AppOptions>(defaultOptions);
 
-  constructor(props: any) {
-    super(props);
-    this.appOptions = getOptionsFromUrl();
-    this.setAppOptions();
-  }
-
-  componentWillMount() {
-    document.addEventListener("keyup", this.onKeyUp.bind(this));
-  }
-
-  onKeyUp(e: KeyboardEvent) {
-    if(e.key === 'Escape') {
-      console.log('Escape');
-      this.setState((previousState, props) => {
-        return {
-          showOptionsMenu: !previousState.showOptionsMenu,
-        };
-      });
+  const onKeyUp = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setShowOptionsMenu(!showOptionsMenu);
     }
-  }
+  }, [showOptionsMenu]);
 
-  setAppOptions() {
-    console.log('appOptions', this.appOptions);
+  const setProperty = useCallback((root: HTMLElement, name: string, value: string) => {
+    root.style.setProperty(name, value);
+  }, []);
 
+  const applyAppOptions = useCallback(() => {
     const root: HTMLElement = document.querySelector(':root')!;
-    setProperty(root, '--wheelColor', this.appOptions.wheelColor || ColorOption.Yellow);
-    setProperty(root, '--analogStickFillColor', this.appOptions.analogStickFillColor || ColorOption.Black);
-    setProperty(root, '--analogStickFillOpacity', (this.appOptions.analogStickFillOpacity || 1).toString());
-    setProperty(root, '--analogStickBorderColor', this.appOptions.analogStickBorderColor || ColorOption.Yellow);
-  }
+    setProperty(root, '--wheelColor', appOptions.wheelColor || ColorOption.Yellow);
+    setProperty(root, '--analogStickFillColor', appOptions.analogStickFillColor || ColorOption.Black);
+    setProperty(root, '--analogStickFillOpacity', (appOptions.analogStickFillOpacity || 1).toString());
+    setProperty(root, '--analogStickBorderColor', appOptions.analogStickBorderColor || ColorOption.Yellow);
+  }, [appOptions, setProperty]);
 
-  render() {
-    return (
-      <Fragment >
-        <div className="app flex-row"> 
-          <DrivingHud />
-          { this.state.showOptionsMenu && 
-            <OptionsMenu />
-          }
-        </div>
-      </Fragment>
-    );
-  }
-}
+  const updateAppOption = useCallback((key: string, value: any): void => {
+    const p: keyof AppOptions = key as keyof AppOptions;
+    setAppOptions(o => ({
+      ...o,
+      [p]: value as never
+    }));
+  }, []);
 
-interface AppState {
-  showOptionsMenu: boolean;
-}
+  useEffect(() => {
+    document.addEventListener('keyup', onKeyUp);
+    return () => {
+      document.removeEventListener('keyup', onKeyUp);
+    }
+  }, [onKeyUp]);
 
-function setProperty(root: HTMLElement, name: string, value: string) {
-  root.style.setProperty(name, value);
+  useEffect(() => {
+    const optionsFromUrl = getOptionsFromUrl();
+    setAppOptions(o => ({ ...o, ...optionsFromUrl }));
+  }, []);
+
+  useEffect(() => {
+    applyAppOptions();
+  }, [appOptions, applyAppOptions]);
+
+  return (
+    <Fragment>
+      <div className="app flex-row">
+        <DrivingHud analogStickSize={appOptions.analogStickSize} />
+        {showOptionsMenu &&
+          <OptionsMenu appOptions={appOptions} onOptionChange={updateAppOption} />
+        }
+      </div>
+    </Fragment>
+  );
 }

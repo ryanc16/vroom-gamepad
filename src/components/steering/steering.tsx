@@ -1,5 +1,5 @@
 import { Component } from "react";
-import './steering.css';
+import './steering.scss';
 import drawnWheel1Png from './drawnWheel1.png';
 import { AnalogStickSize } from "../../services/url-options.service";
 
@@ -9,9 +9,11 @@ export default class Steering extends Component<SteeringProps> {
   private thumbSizePercent: number = AnalogStickSize.Large;
 
   render() {
-    if(this.props.analogStickSize) this.thumbSizePercent = this.props.analogStickSize;
+    if (this.props.analogStickSize) {
+      this.thumbSizePercent = this.props.analogStickSize;
+    }
 
-    return(
+    return (
       <div className="steering">
         {this.renderSteeringWheel()}
         {this.renderThumbStick()}
@@ -35,7 +37,7 @@ export default class Steering extends Component<SteeringProps> {
 
   private calculateSteeringWheelRotation(axisX: number) {
     const rotation = axisX * (Math.PI / 2);
-    return {transform: `rotate(${rotation}rad)`};
+    return { transform: `rotate(${rotation}rad)` };
   }
 
   private calculateThumbPosition(axisX: number, axisY: number, maxRadius: number) {
@@ -56,7 +58,7 @@ export default class Steering extends Component<SteeringProps> {
     const overlap = offset + 10; // small extra distance. gives the element the appearance of an analog stick
 
     const left = offset + (adjustedAxisX * overlap) + '%';
-    const top  = offset + (adjustedAxisY * overlap * -1) + '%'; // negative here flips the y represented in the coordinate plane, to the y in px units
+    const top = offset + (adjustedAxisY * overlap * -1) + '%'; // negative here flips the y represented in the coordinate plane, to the y in px units
     return { left, top };
   }
 }

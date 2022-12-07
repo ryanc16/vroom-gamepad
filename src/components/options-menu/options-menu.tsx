@@ -1,181 +1,185 @@
-import { ChangeEvent, Component } from "react";
-import { analogStickBorderColorKey, analogStickFillColorKey, analogStickFillOpacityKey, AnalogStickSize, analogStickSizeKey, ColorOption, getOptionsFromUrl, wheelColorKey, wheelImgUrlKey } from "../../services/url-options.service";
-import './options-menu.css';
+import React, { ChangeEvent, useCallback, useMemo, useRef, useState } from "react";
+import { AnalogStickSize, AppOptions, ColorOption, UrlOptions } from "../../services/url-options.service";
+import './options-menu.scss';
 
 const lettersOnly: RegExp = /^[a-zA-Z]/;
 
-export default class OptionsMenu extends Component<OptionsMenuProps, OptionsMenuState> {
+export default function OptionsMenu(props: OptionsMenuProps): React.ReactElement {
 
-  state = {
+  const [formOptions, setFormOptions] = useState<OptionsMenuState>({
     wheelImgUrl: {
-      value: ''
+      value: props.appOptions.wheelImgUrl
     },
     wheelColor: {
-      chooser: "predefined",
-      value: ColorOption.Gray
+      chooser: (Object.values(ColorOption) as string[]).includes(props.appOptions.wheelColor) ? "predefined" : 'custom',
+      value: props.appOptions.wheelColor
     },
     analogStickFillColor: {
-      chooser: "predefined",
-      value: ColorOption.Gray
+      chooser: (Object.values(ColorOption) as string[]).includes(props.appOptions.analogStickFillColor) ? "predefined" : 'custom',
+      value: props.appOptions.analogStickFillColor
     },
     analogStickFillOpacity: {
-      value: 0.4
+      value: props.appOptions.analogStickFillOpacity
     },
     analogStickBorderColor: {
-      chooser: "predefined",
-      value: ColorOption.Black
+      chooser: (Object.values(ColorOption) as string[]).includes(props.appOptions.analogStickBorderColor) ? "predefined" : 'custom',
+      value: props.appOptions.analogStickBorderColor
     },
     analogStickSize: {
-      value: AnalogStickSize.Small
+      value: props.appOptions.analogStickSize
     }
-  };
+  });
 
-  constructor(props: OptionsMenuProps) {
-    super(props);
-    const urlOpts = getOptionsFromUrl();
-    console.log(urlOpts);
-    this.setState((prev, props) => {
-      return {
-        ...prev,
-        wheelImgUrl: {
-          ...prev.wheelImgUrl,
-          value: urlOpts.wheelImgUrl
-        },
-        wheelColor: {
-          ...prev.wheelColor,
-          value: urlOpts.wheelColor
-        },
-        analogStickFillColor: {
-          ...prev.analogStickFillColor,
-          value: urlOpts.analogStickFillColor
-        },
-        analogStickFillOpacity: {
-          ...prev.analogStickFillOpacity,
-          value: urlOpts.analogStickFillOpacity
-        },
-        analogStickBorderColor: {
-          ...prev.analogStickBorderColor,
-          value: urlOpts.analogStickBorderColor
-        },
-        analogStickSize: {
-          ...prev.analogStickSize,
-          value: urlOpts.analogStickSize
-        }
-      };
-    })
-  }
+  const customUrlTextAreaRef = useRef<HTMLTextAreaElement>(null);
+  const [customUrlCopyBtnText, setCustomUrlCopyBtnText] = useState<string>('Copy');
 
-  render() {
-    return(
-      <div className="options-menu">
-        <h2>Options Menu</h2>
-
-        <div>
-          <p>{this.generateUrlParams()}</p>
-        </div>
-
-        <div>
-          <input className="wheel-url-input" name="wheelImg" defaultValue={this.state.wheelImgUrl.value} onChange={this.inputValueChanged} type="text" placeholder="Wheel Asset Url" />
-        </div>
-
-        <div className="setting wheel-color">
-          <label>Wheel Color:</label>
-          { this.renderColorOptions('wheelColor', ColorOption) }
-        </div>
-
-        <div className="flex-row">
-          <div className="setting">
-            <label>Analog Stick Fill Opacity:</label>
-            <input className="opacity" type="number" step="0.1" defaultValue={this.state.analogStickFillOpacity.value} name="analogStickFillOpacity" onChange={this.inputValueChanged} />
-          </div>
-
-          <div className="setting">
-            <label>Analog Stick Fill Opacity:</label>
-            { this.renderSelectOptions('analogStickSize', AnalogStickSize) }
-          </div>
-        </div>
-
-        <div className="flex-row">
-          <div className="setting">
-            <label>Analog Stick Fill Color:</label>
-            { this.renderColorOptions('analogStickFillColor', ColorOption) }
-          </div>
-
-          <div className="setting">
-            <label>Analog Stick Border Color:</label>
-            { this.renderColorOptions('analogStickBorderColor', ColorOption) }
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  renderColorOptions(name: keyof OptionsMenuState, options: Record<string, string | number>) {
-    const colorSelectionInputMethodChanged = (e: ChangeEvent<HTMLSelectElement>) => {
-      this.setState((prev, props) => {
-        return {...prev, [name]: {chooser: e.target.value}}
-      });
+  const generateUrlParams = useCallback(() => {
+    const paramMap = {
+      [UrlOptions.wheelImgUrlKey]: formOptions.wheelImgUrl.value,
+      [UrlOptions.wheelColorKey]: formOptions.wheelColor.value,
+      [UrlOptions.analogStickSizeKey]: formOptions.analogStickSize.value,
+      [UrlOptions.analogStickFillColorKey]: formOptions.analogStickFillColor.value,
+      [UrlOptions.analogStickFillOpacityKey]: formOptions.analogStickFillOpacity.value,
+      [UrlOptions.analogStickBorderColorKey]: formOptions.analogStickBorderColor.value
     };
-    
+    return "?" + Object.entries(paramMap).filter(([key, value]) => value != null && value !== '').map(([key, value]) => key + "=" + value).join("&");
+  }, [formOptions]);
+
+  const customUrl = useMemo(() => {
+    return window.location.protocol + "//" + window.location.host + generateUrlParams();
+  }, [generateUrlParams]);
+
+  const copyUrlToClipboard = useCallback(() => {
+    if (customUrlTextAreaRef.current != null) {
+      customUrlTextAreaRef.current.select();
+      setCustomUrlCopyBtnText('Copied!');
+    }
+    navigator.clipboard.writeText(customUrl);
+
+  }, [customUrl]);
+
+  const inputValueChanged = useCallback((e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const key = e.target.name as keyof OptionsMenuState;
+    setFormOptions({ ...formOptions, [key]: { ...formOptions[key], value: e.target.value } });
+    setCustomUrlCopyBtnText('Copy');
+    props.onOptionChange(key, e.target.value);
+  }, [formOptions, props]);
+
+  const renderSelectOptions = useCallback((name: keyof OptionsMenuState, options: Record<string, string | number>) => {
+    const list = Object.entries(options)
+      .filter(([_, value]) => ((typeof value === 'string' && value.length >= 0) || (typeof value === 'number' && value > 0)))
+      .filter(([key]) => key.match(lettersOnly))
+      .map(([key, value]) => {
+        return (
+          value === '' ? <option key={key} value={value}>Default</option> : <option key={key} value={value}>{key}</option>
+        );
+      });
+
+    return (
+      <select name={name} className="color-option-list" defaultValue={formOptions[name].value} onChange={inputValueChanged}>
+        {list}
+      </select>
+    );
+  }, [formOptions, inputValueChanged]);
+
+  const renderColorChooser = useCallback((name: keyof OptionsMenuState) => {
+    return <input type="color" name={name} defaultValue={formOptions[name].value} className="color-options-list" onChange={inputValueChanged} />
+  }, [formOptions, inputValueChanged]);
+
+  const renderColorOptions = useCallback((name: keyof OptionsMenuState, options: Record<string, string | number>) => {
+    const colorSelectionInputMethodChanged = (e: ChangeEvent<HTMLSelectElement>) => {
+      setFormOptions({ ...formOptions, [name]: { chooser: e.target.value, value: ColorOption.None } });
+    };
+
     const renderChooser = () => {
-      const value = (this.state[name] as ColorState).chooser;
+      const value = (formOptions[name] as ColorState).chooser;
       if (value === 'predefined') {
-        return this.renderSelectOptions(name, options);
+        return renderSelectOptions(name, options);
       } else if (value === 'custom') {
-        return this.renderColorChooser(name);
+        return renderColorChooser(name);
       }
     }
+    const { chooser } = (formOptions[name] as ColorState);
     return (
-      <div>
-        <select name="color-method" onChange={colorSelectionInputMethodChanged}>
+      <div className="controls flex-row gap-1">
+        <select name="color-method" value={chooser} onChange={colorSelectionInputMethodChanged}>
           <option key="predefined" value="predefined">Predefined</option>
           <option key="custom" value="custom">Custom</option>
         </select>
         {renderChooser()}
       </div>
     );
-  }
+  }, [formOptions, renderColorChooser, renderSelectOptions]);
 
-  renderSelectOptions(name: keyof OptionsMenuState, options: Record<string, string | number>) {
-    const list = Object.entries(options)
-    .filter(([_, value]) => ((typeof value === 'string' && value.length > 0) || (typeof value === 'number' && value > 0)))
-    .filter(([key]) => key.match(lettersOnly))
-    .map(([key, value]) => {
-      return (
-        <option key={key} value={value}>{key}</option>
-      );
-    });
 
-    return (
-      <select name={name} className="color-option-list" defaultValue={this.state[name].value} onChange={this.inputValueChanged}>
-        { list }
-      </select>
-    );
-  }
 
-  renderColorChooser(name: keyof OptionsMenuState) {
-    return <input type="color" name={name} defaultValue={this.state[name].value} className="color-options-list" onChange={this.inputValueChanged}/>
-  }
+  return (
+    <div className="options-menu" style={{ maxWidth: '25%' }}>
+      <h2 style={{ marginTop: 0 }}>Options Menu</h2>
 
-  private inputValueChanged = (e: ChangeEvent<HTMLInputElement|HTMLSelectElement>) => {
-    this.setState((prev, props) => {
-      const key = e.target.name as keyof OptionsMenuState;
-      return {...prev, [key]: {...prev[key], value: e.target.value}};
-    });
-  }
+      <div className="flex-col" style={{ gap: '0.25rem' }}>
+        <button className="btn btn-block" onClick={copyUrlToClipboard}>{customUrlCopyBtnText}</button>
+        <textarea className="copyurl" ref={customUrlTextAreaRef} value={customUrl}></textarea>
+      </div>
+      <hr />
 
-  private generateUrlParams = () => {
-    const paramMap = {
-      [wheelImgUrlKey]: this.state.wheelImgUrl.value,
-      [wheelColorKey]: this.state.wheelColor.value,
-      [analogStickSizeKey]: this.state.analogStickSize.value,
-      [analogStickFillColorKey]: this.state.analogStickFillColor.value,
-      [analogStickFillOpacityKey]: this.state.analogStickFillOpacity.value,
-      [analogStickBorderColorKey]: this.state.analogStickBorderColor.value
-    };
-    return "?"+ Object.entries(paramMap).map(([key, value]) => key+"="+value).join("&");
-  }
+      <h3>Wheel</h3>
+      <div className="flex-col gap-1">
+        <div className="flex-row">
+          <div className="setting card">
+            <h4 className="card-heading">
+              Wheel Asset Url
+            </h4>
+            <div className="card-body">
+              <input className="wheel-url-input" name="wheelImg" value={formOptions.wheelImgUrl.value} onChange={inputValueChanged} type="text" placeholder="Wheel Asset Url" />
+            </div>
+          </div>
+        </div>
+        <div className="flex-row">
+          <div className="setting card" style={{ width: '50%' }}>
+            <h4 className="card-heading">Wheel Color</h4>
+            <div className="card-body">
+              {renderColorOptions('wheelColor', ColorOption)}
+            </div>
+          </div>
+        </div>
+      </div>
 
+      <h3>Analog Stick</h3>
+      <div className="flex-col gap-1">
+        <div className="flex-row gap-1">
+          <div className="setting card">
+            <h4 className="card-heading">Analog Stick Fill Color</h4>
+            <div className="card-body">
+              {renderColorOptions('analogStickFillColor', ColorOption)}
+            </div>
+          </div>
+
+          <div className="setting card">
+            <h4 className="card-heading">Analog Stick Fill Opacity</h4>
+            <div className="card-body controls">
+              <input className="opacity" type="number" step={0.1} min={0} max={1} value={formOptions.analogStickFillOpacity.value} name="analogStickFillOpacity" onChange={inputValueChanged} />
+            </div>
+          </div>
+        </div>
+        <div className="flex-row gap-1">
+          <div className="setting card">
+            <h4 className="card-heading">Analog Stick Size</h4>
+            <div className="card-body controls">
+              {renderSelectOptions('analogStickSize', AnalogStickSize)}
+            </div>
+          </div>
+
+          <div className="setting card">
+            <h4 className="card-heading">Analog Stick Border Color</h4>
+            <div className="card-body">
+              {renderColorOptions('analogStickBorderColor', ColorOption)}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div >
+  );
 }
 
 interface OptionsMenuState {
@@ -195,9 +199,10 @@ interface OptionsMenuState {
 
 interface ColorState {
   chooser: string;
-  value: ColorOption;
+  value: string | ColorOption;
 }
 
 interface OptionsMenuProps {
-
+  onOptionChange: (prop: string, value: any) => void;
+  appOptions: AppOptions;
 }

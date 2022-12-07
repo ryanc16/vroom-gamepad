@@ -13,19 +13,6 @@ export enum ColorOption {
   White = 'white',
 }
 
-enum UrlColorOption {
-  r = 'Red',
-  o = 'Orange',
-  y = 'Yellow',
-  g = 'Green',
-  b = 'Blue',
-  v = 'Violet',
-  p = 'Purple',
-  a = 'Gray',
-  k = 'Black',
-  w = 'White',
-}
-
 export enum AnalogStickSize {
   None = 0,
   Small = 40,
@@ -34,79 +21,61 @@ export enum AnalogStickSize {
 
 export interface AppOptions {
   wheelImgUrl?: string;
-  wheelColor: ColorOption;
-  analogStickSize: AnalogStickSize;
-  analogStickFillColor: ColorOption;
+  wheelColor: string | ColorOption;
+  analogStickSize: number | AnalogStickSize;
+  analogStickFillColor: string | ColorOption;
   analogStickFillOpacity: number;
-  analogStickBorderColor: ColorOption;
+  analogStickBorderColor: string | ColorOption;
 }
 
-export const wheelImgUrlKey = 'img';
-export const wheelColorKey = 'wc';
-export const analogStickSizeKey = 'ss';
-export const analogStickFillColorKey = 'sf';
-export const analogStickFillOpacityKey = 'so';
-export const analogStickBorderColorKey = 'sb';
-
-
-interface UrlOptions {
-  [wheelImgUrlKey]: string;
-  [wheelColorKey]: keyof UrlColorOption;
-  [analogStickSizeKey]: AnalogStickSize;
-  [analogStickFillColorKey]: keyof UrlColorOption;
-  [analogStickFillOpacityKey]: string;
-  [analogStickBorderColorKey]: keyof UrlColorOption;
-}
-
-export function checkUrlColor(value: keyof UrlColorOption): boolean {
-  const good = Object.keys(UrlColorOption).includes(value as string);
-  return good;
-}
-
-function getColorFromKey(k: keyof UrlColorOption) {
-  const lookup = (UrlColorOption as any)[k];
-  const value = (ColorOption as any)[lookup];
-  return value;
+export enum UrlOptions {
+  wheelImgUrlKey = 'img',
+  wheelColorKey = 'wc',
+  analogStickSizeKey = 'ss',
+  analogStickFillColorKey = 'sf',
+  analogStickFillOpacityKey = 'so',
+  analogStickBorderColorKey = 'sb',
 }
 
 export function checkAnalogStickSize(value: AnalogStickSize | string): boolean {
   const _value = (typeof value === 'string') ? parseInt(value) : value;
-  return Object.values(AnalogStickSize).includes(_value as AnalogStickSize);
+  return value !== '' && _value in AnalogStickSize;
 }
 
 export function checkAnalogStickFillOpacity(value: string): boolean {
   const number = parseFloat(value);
-  if(!number) return false;
-  return number > 0 && number <= 1;
+  if (!number) return false;
+  return value !== '' && number > 0 && number <= 1;
 }
 
-export function getOptionsFromUrl(): AppOptions {
-  // eslint-disable-next-line no-restricted-globals
-  const search = location.search.substring(1);
-
-  if(!search) {
-    return {
-      wheelImgUrl: undefined,
-      wheelColor: ColorOption.None,
-      analogStickSize: AnalogStickSize.None,
-      analogStickFillColor: ColorOption.None,
-      analogStickFillOpacity: 1,
-      analogStickBorderColor: ColorOption.None,
-    }
+export function getOptionsFromUrl(): Partial<AppOptions> {
+  const search = window.location.search.substring(1);
+  if (search == null || search === '') {
+    return {};
   }
 
-  const options: UrlOptions = JSON.parse(
-    `{"${search.replace(/&/g, '","').replace(/=/g,'":"')}"}`,
-    function(key, value) { return key===""?value:decodeURIComponent(value) }
-  );
+  const options = new window.URLSearchParams(window.location.href.slice(window.location.href.indexOf('?')));
 
-  return {
-    wheelImgUrl: (options[wheelImgUrlKey])?.toString(),
-    wheelColor: (checkUrlColor(options[wheelColorKey])) ? getColorFromKey(options[wheelColorKey]) : ColorOption.None,
-    analogStickSize: (checkAnalogStickSize(options[analogStickSizeKey])) ? options[analogStickSizeKey] : AnalogStickSize.None,
-    analogStickFillColor: (checkUrlColor(options[analogStickFillColorKey])) ? getColorFromKey(options[analogStickFillColorKey]) : ColorOption.None,
-    analogStickFillOpacity: (checkAnalogStickFillOpacity(options[analogStickFillOpacityKey])) ? parseFloat(options[analogStickFillOpacityKey]) : 1,
-    analogStickBorderColor: (checkUrlColor(options[analogStickBorderColorKey])) ? getColorFromKey(options[analogStickBorderColorKey]) : ColorOption.None,
-  };
+  const result = {} as Partial<AppOptions>;
+  if (options.has(UrlOptions.wheelImgUrlKey) && options.get(UrlOptions.wheelImgUrlKey)!.toString() !== '') {
+    result['wheelImgUrl'] = options.get(UrlOptions.wheelImgUrlKey)!.toString();
+  }
+  if (options.has(UrlOptions.wheelColorKey) && options.get(UrlOptions.wheelColorKey)!.toString() !== '') {
+    result['wheelColor'] = options.get(UrlOptions.wheelColorKey)!.toString();
+  }
+  if (options.has(UrlOptions.analogStickSizeKey) && checkAnalogStickSize(options.get(UrlOptions.analogStickSizeKey)!)) {
+    result['analogStickSize'] = parseInt(options.get(UrlOptions.analogStickSizeKey)!);
+  }
+  if (options.has(UrlOptions.analogStickFillColorKey) && options.get(UrlOptions.analogStickFillColorKey)!.toString() !== '') {
+    result['analogStickFillColor'] = options.get(UrlOptions.analogStickFillColorKey)!.toString();
+  }
+  if (options.has(UrlOptions.analogStickFillOpacityKey) && checkAnalogStickFillOpacity(options.get(UrlOptions.analogStickFillOpacityKey)!)) {
+    result['analogStickFillOpacity'] = parseFloat(options.get(UrlOptions.analogStickFillOpacityKey)!);
+  }
+  if (options.has(UrlOptions.analogStickBorderColorKey) && options.get(UrlOptions.analogStickBorderColorKey)!.toString() !== '') {
+    result['analogStickBorderColor'] = options.get(UrlOptions.analogStickBorderColorKey)!.toString();
+  }
+
+  return result;
 }
 
