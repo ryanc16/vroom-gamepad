@@ -3,6 +3,10 @@ import { AnalogStickSize, AppOptions, ColorOption, UrlOptions } from "../../serv
 import './options-menu.scss';
 
 const lettersOnly: RegExp = /^[a-zA-Z]/;
+enum ColorMethodType {
+  PREDEFINED = 'predefined',
+  CUSTOM = 'custom'
+}
 
 export default function OptionsMenu(props: OptionsMenuProps): React.ReactElement {
 
@@ -42,7 +46,7 @@ export default function OptionsMenu(props: OptionsMenuProps): React.ReactElement
       [UrlOptions.analogStickFillOpacityKey]: formOptions.analogStickFillOpacity.value,
       [UrlOptions.analogStickBorderColorKey]: formOptions.analogStickBorderColor.value
     };
-    return "?" + Object.entries(paramMap).filter(([key, value]) => value != null && value !== '').map(([key, value]) => key + "=" + value).join("&");
+    return "?" + Object.entries(paramMap).filter(([key, value]) => value != null && value !== '').map(([key, value]) => encodeURIComponent(key) + "=" + encodeURIComponent(value!)).join("&");
   }, [formOptions]);
 
   const customUrl = useMemo(() => {
@@ -180,11 +184,6 @@ export default function OptionsMenu(props: OptionsMenuProps): React.ReactElement
       </div>
     </div >
   );
-}
-
-enum ColorMethodType {
-  PREDEFINED = 'predefined',
-  CUSTOM = 'custom'
 }
 
 interface OptionsMenuState {
