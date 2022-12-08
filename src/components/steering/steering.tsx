@@ -1,6 +1,6 @@
 import { Component } from "react";
 import './steering.scss';
-import drawnWheel1Png from './drawnWheel1.png';
+import drawnWheelPng from './drawnWheelBlue.png';
 import { AnalogStickSize } from "../../services/url-options.service";
 
 
@@ -23,7 +23,7 @@ export default class Steering extends Component<SteeringProps> {
 
   private renderSteeringWheel() {
     const style = this.calculateSteeringWheelRotation(this.props.axisX);
-    return <img alt="steeringwheel" className="wheel" style={style} src={drawnWheel1Png} />
+    return <img alt="steeringwheel" className="wheel" style={style} src={drawnWheelPng} />
   }
 
   private renderThumbStick() {
