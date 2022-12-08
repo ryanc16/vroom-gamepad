@@ -37,12 +37,12 @@ export enum UrlOptions {
   analogStickBorderColorKey = 'sb',
 }
 
-export function checkAnalogStickSize(value: AnalogStickSize | string): boolean {
+function checkAnalogStickSize(value: AnalogStickSize | string): boolean {
   const _value = (typeof value === 'string') ? parseInt(value) : value;
   return value !== '' && _value in AnalogStickSize;
 }
 
-export function checkAnalogStickFillOpacity(value: string): boolean {
+function checkAnalogStickFillOpacity(value: string): boolean {
   const number = parseFloat(value);
   if (!number) return false;
   return value !== '' && number > 0 && number <= 1;

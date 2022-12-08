@@ -30,10 +30,10 @@ export default function App(): React.ReactElement {
 
   const applyAppOptions = useCallback(() => {
     const root: HTMLElement = document.querySelector(':root')!;
-    setProperty(root, '--wheelColor', appOptions.wheelColor || ColorOption.Yellow);
-    setProperty(root, '--analogStickFillColor', appOptions.analogStickFillColor || ColorOption.Black);
-    setProperty(root, '--analogStickFillOpacity', (appOptions.analogStickFillOpacity || 1).toString());
-    setProperty(root, '--analogStickBorderColor', appOptions.analogStickBorderColor || ColorOption.Yellow);
+    setProperty(root, '--wheelColor', appOptions.wheelColor);
+    setProperty(root, '--analogStickBorderColor', appOptions.analogStickBorderColor);
+    setProperty(root, '--analogStickFillColor', appOptions.analogStickFillColor);
+    setProperty(root, '--analogStickFillOpacity', appOptions.analogStickFillOpacity.toString());
   }, [appOptions, setProperty]);
 
   const updateAppOption = useCallback((key: string, value: any): void => {
