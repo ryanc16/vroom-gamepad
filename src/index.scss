@@ -41,6 +41,12 @@ code {
   align-items: flex-end;
 }
 
+.disabled,
+[disabled],
+:disabled {
+  background-color: lightgray;
+}
+
 .gap-0 {
   gap: 0;
 }

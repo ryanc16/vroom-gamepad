@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import './App.scss';
 import DrivingHud from './components/driving-hud/driving-hud';
 import OptionsMenu from './components/options-menu/options-menu';
@@ -24,13 +24,20 @@ export default function App(): React.ReactElement {
     }
   }, [showOptionsMenu]);
 
+  const wheelColor = useMemo<ColorOption>(() => {
+    if (appOptions.wheelColor === ColorOption.Yellow) {
+      return ColorOption.Yellow;
+    } else {
+      return ColorOption.Blue;
+    }
+  }, [appOptions.wheelColor]);
+
   const setProperty = useCallback((root: HTMLElement, name: string, value: string) => {
     root.style.setProperty(name, value);
   }, []);
 
   const applyAppOptions = useCallback(() => {
     const root: HTMLElement = document.querySelector(':root')!;
-    setProperty(root, '--wheelColor', appOptions.wheelColor);
     setProperty(root, '--analogStickBorderColor', appOptions.analogStickBorderColor);
     setProperty(root, '--analogStickFillColor', appOptions.analogStickFillColor);
     setProperty(root, '--analogStickFillOpacity', appOptions.analogStickFillOpacity.toString());
@@ -63,7 +70,7 @@ export default function App(): React.ReactElement {
   return (
     <Fragment>
       <div className="app flex-row">
-        <DrivingHud analogStickSize={appOptions.analogStickSize} />
+        <DrivingHud analogStickSize={appOptions.analogStickSize} wheelColor={wheelColor} />
         {showOptionsMenu &&
           <OptionsMenu appOptions={appOptions} onOptionChange={updateAppOption} />
         }

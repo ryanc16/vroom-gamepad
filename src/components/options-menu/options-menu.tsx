@@ -69,7 +69,7 @@ export default function OptionsMenu(props: OptionsMenuProps): React.ReactElement
     props.onOptionChange(key, e.target.value);
   }, [formOptions, props]);
 
-  const renderSelectOptions = useCallback((name: keyof OptionsMenuState, options: Record<string, string | number>) => {
+  const renderSelectOptions = useCallback((name: keyof OptionsMenuState, options: Record<string, string | number>): JSX.Element => {
     const list = Object.entries(options)
       .filter(([_, value]) => ((typeof value === 'string' && value.length >= 0) || (typeof value === 'number' && value > 0)))
       .filter(([key]) => key.match(lettersOnly))
@@ -90,7 +90,7 @@ export default function OptionsMenu(props: OptionsMenuProps): React.ReactElement
     return <input type="color" name={name} defaultValue={formOptions[name].value} className="color-options-list" onChange={inputValueChanged} />
   }, [formOptions, inputValueChanged]);
 
-  const renderColorOptions = useCallback((name: keyof OptionsMenuState, options: Record<string, string | number>) => {
+  const renderColorOptions = useCallback((name: keyof OptionsMenuState, methods: Record<ColorMethodType, (name: keyof OptionsMenuState) => JSX.Element>) => {
     const colorSelectionInputMethodChanged = (e: ChangeEvent<HTMLSelectElement>) => {
       setFormOptions({ ...formOptions, [name]: { chooser: e.target.value, value: ColorOption.None } });
     };
@@ -98,9 +98,9 @@ export default function OptionsMenu(props: OptionsMenuProps): React.ReactElement
     const renderChooser = () => {
       const value = (formOptions[name] as ColorState).chooser;
       if (value === ColorMethodType.PREDEFINED) {
-        return renderSelectOptions(name, options);
+        return methods[ColorMethodType.PREDEFINED](name);
       } else if (value === ColorMethodType.CUSTOM) {
-        return renderColorChooser(name);
+        return methods[ColorMethodType.CUSTOM](name);
       }
     }
     const { chooser } = (formOptions[name] as ColorState);
@@ -113,7 +113,7 @@ export default function OptionsMenu(props: OptionsMenuProps): React.ReactElement
         {renderChooser()}
       </div>
     );
-  }, [formOptions, renderColorChooser, renderSelectOptions]);
+  }, [formOptions]);
 
 
 
@@ -131,19 +131,12 @@ export default function OptionsMenu(props: OptionsMenuProps): React.ReactElement
       <div className="flex-col gap-1">
         <div className="flex-row">
           <div className="setting card">
-            <h4 className="card-heading">
-              Wheel Asset Url
-            </h4>
-            <div className="card-body">
-              <input className="wheel-url-input" name="wheelImg" value={formOptions.wheelImgUrl.value} onChange={inputValueChanged} type="text" placeholder="Wheel Asset Url" />
-            </div>
-          </div>
-        </div>
-        <div className="flex-row">
-          <div className="setting card" style={{ width: '50%' }}>
             <h4 className="card-heading">Wheel Color</h4>
             <div className="card-body">
-              {renderColorOptions('wheelColor', ColorOption)}
+              {renderColorOptions('wheelColor', {
+                [ColorMethodType.PREDEFINED]: (name) => renderSelectOptions(name, { Default: ColorOption.None, Blue: ColorOption.Blue, Yellow: ColorOption.Yellow }),
+                [ColorMethodType.CUSTOM]: (name) => <input className="wheel-url-input" name="wheelImg" disabled defaultValue={formOptions.wheelImgUrl.value} onChange={inputValueChanged} type="text" placeholder="Wheel Asset Url" />
+              })}
             </div>
           </div>
         </div>
@@ -155,7 +148,10 @@ export default function OptionsMenu(props: OptionsMenuProps): React.ReactElement
           <div className="setting card">
             <h4 className="card-heading">Analog Stick Fill Color</h4>
             <div className="card-body">
-              {renderColorOptions('analogStickFillColor', ColorOption)}
+              {renderColorOptions('analogStickFillColor', {
+                [ColorMethodType.PREDEFINED]: (name) => renderSelectOptions(name, ColorOption),
+                [ColorMethodType.CUSTOM]: (name) => renderColorChooser(name)
+              })}
             </div>
           </div>
 
@@ -177,7 +173,10 @@ export default function OptionsMenu(props: OptionsMenuProps): React.ReactElement
           <div className="setting card">
             <h4 className="card-heading">Analog Stick Border Color</h4>
             <div className="card-body">
-              {renderColorOptions('analogStickBorderColor', ColorOption)}
+              {renderColorOptions('analogStickBorderColor', {
+                [ColorMethodType.PREDEFINED]: (name) => renderSelectOptions(name, ColorOption),
+                [ColorMethodType.CUSTOM]: (name) => renderColorChooser(name)
+              })}
             </div>
           </div>
         </div>

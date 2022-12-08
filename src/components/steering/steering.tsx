@@ -1,7 +1,8 @@
 import { Component } from "react";
 import './steering.scss';
-import drawnWheelPng from './drawnWheelBlue.png';
-import { AnalogStickSize } from "../../services/url-options.service";
+import drawnWheelBluePng from './drawnWheelBlue.png';
+import drawnWheelYellowPng from './drawnWheelYellow.png';
+import { AnalogStickSize, ColorOption } from "../../services/url-options.service";
 
 
 export default class Steering extends Component<SteeringProps> {
@@ -23,7 +24,11 @@ export default class Steering extends Component<SteeringProps> {
 
   private renderSteeringWheel() {
     const style = this.calculateSteeringWheelRotation(this.props.axisX);
-    return <img alt="steeringwheel" className="wheel" style={style} src={drawnWheelPng} />
+    let imgSrc = drawnWheelBluePng;
+    if (this.props.color === ColorOption.Yellow) {
+      imgSrc = drawnWheelYellowPng;
+    }
+    return <img alt="steeringwheel" className="wheel" style={style} src={imgSrc} />
   }
 
   private renderThumbStick() {
@@ -68,4 +73,5 @@ interface SteeringProps {
   axisY: number;
 
   analogStickSize: AnalogStickSize;
+  color: ColorOption;
 }
