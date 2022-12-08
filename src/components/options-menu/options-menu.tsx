@@ -11,18 +11,18 @@ export default function OptionsMenu(props: OptionsMenuProps): React.ReactElement
       value: props.appOptions.wheelImgUrl
     },
     wheelColor: {
-      chooser: (Object.values(ColorOption) as string[]).includes(props.appOptions.wheelColor) ? "predefined" : 'custom',
+      chooser: (Object.values(ColorOption) as string[]).includes(props.appOptions.wheelColor) ? ColorMethodType.PREDEFINED : ColorMethodType.CUSTOM,
       value: props.appOptions.wheelColor
     },
     analogStickFillColor: {
-      chooser: (Object.values(ColorOption) as string[]).includes(props.appOptions.analogStickFillColor) ? "predefined" : 'custom',
+      chooser: (Object.values(ColorOption) as string[]).includes(props.appOptions.analogStickFillColor) ? ColorMethodType.PREDEFINED : ColorMethodType.CUSTOM,
       value: props.appOptions.analogStickFillColor
     },
     analogStickFillOpacity: {
       value: props.appOptions.analogStickFillOpacity
     },
     analogStickBorderColor: {
-      chooser: (Object.values(ColorOption) as string[]).includes(props.appOptions.analogStickBorderColor) ? "predefined" : 'custom',
+      chooser: (Object.values(ColorOption) as string[]).includes(props.appOptions.analogStickBorderColor) ? ColorMethodType.PREDEFINED : ColorMethodType.CUSTOM,
       value: props.appOptions.analogStickBorderColor
     },
     analogStickSize: {
@@ -93,18 +93,18 @@ export default function OptionsMenu(props: OptionsMenuProps): React.ReactElement
 
     const renderChooser = () => {
       const value = (formOptions[name] as ColorState).chooser;
-      if (value === 'predefined') {
+      if (value === ColorMethodType.PREDEFINED) {
         return renderSelectOptions(name, options);
-      } else if (value === 'custom') {
+      } else if (value === ColorMethodType.CUSTOM) {
         return renderColorChooser(name);
       }
     }
     const { chooser } = (formOptions[name] as ColorState);
     return (
-      <div className="controls flex-row gap-1">
+      <div className={"controls flex-row gap-1 " + name}>
         <select name="color-method" value={chooser} onChange={colorSelectionInputMethodChanged}>
-          <option key="predefined" value="predefined">Predefined</option>
-          <option key="custom" value="custom">Custom</option>
+          <option key={ColorMethodType.PREDEFINED} value={ColorMethodType.PREDEFINED}>Predefined</option>
+          <option key={ColorMethodType.CUSTOM} value={ColorMethodType.CUSTOM}>Custom</option>
         </select>
         {renderChooser()}
       </div>
@@ -117,9 +117,9 @@ export default function OptionsMenu(props: OptionsMenuProps): React.ReactElement
     <div className="options-menu" style={{ maxWidth: '25%' }}>
       <h2 style={{ marginTop: 0 }}>Options Menu</h2>
 
-      <div className="flex-col" style={{ gap: '0.25rem' }}>
+      <div className="flex-col gap-1">
         <button className="btn btn-block" onClick={copyUrlToClipboard}>{customUrlCopyBtnText}</button>
-        <textarea className="copyurl" ref={customUrlTextAreaRef} value={customUrl}></textarea>
+        <textarea className="copyurl" ref={customUrlTextAreaRef} value={customUrl} readOnly></textarea>
       </div>
       <hr />
 
@@ -157,7 +157,7 @@ export default function OptionsMenu(props: OptionsMenuProps): React.ReactElement
 
           <div className="setting card">
             <h4 className="card-heading">Analog Stick Fill Opacity</h4>
-            <div className="card-body controls">
+            <div className="card-body controls analogStickFillOpacity">
               <input className="opacity" type="number" step={0.1} min={0} max={1} value={formOptions.analogStickFillOpacity.value} name="analogStickFillOpacity" onChange={inputValueChanged} />
             </div>
           </div>
@@ -165,7 +165,7 @@ export default function OptionsMenu(props: OptionsMenuProps): React.ReactElement
         <div className="flex-row gap-1">
           <div className="setting card">
             <h4 className="card-heading">Analog Stick Size</h4>
-            <div className="card-body controls">
+            <div className="card-body controls analogStickSize">
               {renderSelectOptions('analogStickSize', AnalogStickSize)}
             </div>
           </div>
@@ -180,6 +180,11 @@ export default function OptionsMenu(props: OptionsMenuProps): React.ReactElement
       </div>
     </div >
   );
+}
+
+enum ColorMethodType {
+  PREDEFINED = 'predefined',
+  CUSTOM = 'custom'
 }
 
 interface OptionsMenuState {
