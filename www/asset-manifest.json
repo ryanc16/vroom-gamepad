@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "./static/css/main.9efcb220.css",
-    "main.js": "./static/js/main.b0ead90e.js",
+    "main.js": "./static/js/main.077b0ab5.js",
     "static/js/787.adab7dfc.chunk.js": "./static/js/787.adab7dfc.chunk.js",
     "static/media/gauge-horizontal-background.png": "./static/media/gauge-horizontal-background.b564afbdf5f6bddfb0d0.png",
     "static/media/gauge-horizontal-throttle-fill.png": "./static/media/gauge-horizontal-throttle-fill.41977b9c592e50312a8e.png",
@@ -10,11 +10,11 @@
     "static/media/gauge-horizontal-braking-fill.png": "./static/media/gauge-horizontal-braking-fill.4781a37baaf776a24ffe.png",
     "index.html": "./index.html",
     "main.9efcb220.css.map": "./static/css/main.9efcb220.css.map",
-    "main.b0ead90e.js.map": "./static/js/main.b0ead90e.js.map",
+    "main.077b0ab5.js.map": "./static/js/main.077b0ab5.js.map",
     "787.adab7dfc.chunk.js.map": "./static/js/787.adab7dfc.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.9efcb220.css",
-    "static/js/main.b0ead90e.js"
+    "static/js/main.077b0ab5.js"
   ]
 }
