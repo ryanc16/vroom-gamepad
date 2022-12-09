@@ -48,6 +48,11 @@ function checkAnalogStickFillOpacity(value: string): boolean {
   return value !== '' && number > 0 && number <= 1;
 }
 
+export function generateCustomUrl(params: Partial<Record<UrlOptions, string | number>>): string {
+  const searchString = "?" + Object.entries(params).filter(([key, value]) => value != null && value !== '').map(([key, value]) => encodeURIComponent(key) + "=" + encodeURIComponent(value!)).join("&");
+  return window.location.origin + window.location.pathname + searchString;
+}
+
 export function getOptionsFromUrl(): Partial<AppOptions> {
   const search = window.location.search.substring(1);
   if (search == null || search === '') {
