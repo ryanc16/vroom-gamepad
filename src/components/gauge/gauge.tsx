@@ -1,5 +1,5 @@
 import { Component } from "react";
-import './gauge.css';
+import './gauge.scss';
 
 import gaugeBackgroundPng from './gauge-horizontal-background.png';
 import gaugeThrottleFillPng from './gauge-horizontal-throttle-fill.png';
@@ -8,7 +8,7 @@ import gaugeBrakingFillPng from './gauge-horizontal-braking-fill.png';
 export default class Gauge extends Component<GaugeProps> {
 
   render() {
-    return(
+    return (
       <div className="gauge">
         <img alt="gaugeBackground" className="background" src={gaugeBackgroundPng} />
         {<img alt="gaugeThrottleFill" className="fill throttle" style={this.getFillClipRect(this.props.throttle)} src={gaugeThrottleFillPng} />}

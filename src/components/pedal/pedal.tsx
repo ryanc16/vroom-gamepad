@@ -1,12 +1,12 @@
 import { Component } from "react";
-import './pedal.css';
+import './pedal.scss';
 
 export default class Pedal extends Component<PedalProps> {
 
   render() {
-    return(
+    return (
       <div className="pedal">
-        <div className="clip" style={{bottom: (this.props.percent*100)+'%'}}></div>
+        <div className="clip" style={{ bottom: (this.props.percent * 100) + '%' }}></div>
       </div>
     );
   }

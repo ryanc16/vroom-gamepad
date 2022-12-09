@@ -1,11 +1,12 @@
 import { Component, Fragment } from 'react';
 import Gamepad from 'react-gamepad';
 import ControllerConstants from '../../constants/controller-constants';
+import { ColorOption } from '../../services/url-options.service';
 import Gauge from '../gauge/gauge';
 import Steering from '../steering/steering';
-import './driving-hud.css';
+import './driving-hud.scss';
 
-export default class DrivingHud extends Component<any, DrivingHudState> {
+export default class DrivingHud extends Component<DrivingHudProps, DrivingHudState> {
 
   state = {
     throttle: 0,
@@ -19,11 +20,11 @@ export default class DrivingHud extends Component<any, DrivingHudState> {
   render() {
     return (
       <Fragment >
-        <Gamepad onAxisChange={this.onAxisChangeHandler}><div/></Gamepad>
+        <Gamepad onAxisChange={this.onAxisChangeHandler}><div /></Gamepad>
         <div className="driving-hud flex-row">
           <div className="flex-col">
             <Gauge throttle={this.state.throttle} braking={this.state.braking} />
-            <Steering axisX={this.state.steering.axisX} axisY={this.state.steering.axisY} />
+            <Steering axisX={this.state.steering.axisX} axisY={this.state.steering.axisY} analogStickSize={this.props.analogStickSize} color={this.props.wheelColor} />
           </div>
         </div>
       </Fragment>
@@ -32,9 +33,9 @@ export default class DrivingHud extends Component<any, DrivingHudState> {
 
   onAxisChangeHandler = (axisName: string, value: number) => {
     if (axisName === ControllerConstants.RightTrigger) {
-      this.setState({throttle: value});
+      this.setState({ throttle: value });
     } else if (axisName === ControllerConstants.LeftTrigger) {
-      this.setState({braking: value});
+      this.setState({ braking: value });
     } else if (axisName === ControllerConstants.LeftStickX) {
       this.setState((previousState, props) => {
         return {
@@ -56,6 +57,11 @@ export default class DrivingHud extends Component<any, DrivingHudState> {
     }
   }
 
+}
+
+interface DrivingHudProps {
+  analogStickSize: number;
+  wheelColor: ColorOption;
 }
 
 interface DrivingHudState {

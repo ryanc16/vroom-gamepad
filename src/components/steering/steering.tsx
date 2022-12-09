@@ -1,13 +1,20 @@
 import { Component } from "react";
-import './steering.css';
-import drawnWheel1Png from './drawnWheel1.png';
+import './steering.scss';
+import drawnWheelBluePng from './drawnWheelBlue.png';
+import drawnWheelYellowPng from './drawnWheelYellow.png';
+import { AnalogStickSize, ColorOption } from "../../services/url-options.service";
+
 
 export default class Steering extends Component<SteeringProps> {
 
-  private readonly thumbSizePercent: number = 70;
+  private thumbSizePercent: number = AnalogStickSize.Large;
 
   render() {
-    return(
+    if (this.props.analogStickSize) {
+      this.thumbSizePercent = this.props.analogStickSize;
+    }
+
+    return (
       <div className="steering">
         {this.renderSteeringWheel()}
         {this.renderThumbStick()}
@@ -17,7 +24,11 @@ export default class Steering extends Component<SteeringProps> {
 
   private renderSteeringWheel() {
     const style = this.calculateSteeringWheelRotation(this.props.axisX);
-    return <img alt="steeringwheel" className="wheel" style={style} src={drawnWheel1Png} />
+    let imgSrc = drawnWheelBluePng;
+    if (this.props.color === ColorOption.Yellow) {
+      imgSrc = drawnWheelYellowPng;
+    }
+    return <img alt="steeringwheel" className="wheel" style={style} src={imgSrc} />
   }
 
   private renderThumbStick() {
@@ -31,7 +42,7 @@ export default class Steering extends Component<SteeringProps> {
 
   private calculateSteeringWheelRotation(axisX: number) {
     const rotation = axisX * (Math.PI / 2);
-    return {transform: `rotate(${rotation}rad)`};
+    return { transform: `rotate(${rotation}rad)` };
   }
 
   private calculateThumbPosition(axisX: number, axisY: number, maxRadius: number) {
@@ -52,7 +63,7 @@ export default class Steering extends Component<SteeringProps> {
     const overlap = offset + 10; // small extra distance. gives the element the appearance of an analog stick
 
     const left = offset + (adjustedAxisX * overlap) + '%';
-    const top  = offset + (adjustedAxisY * overlap * -1) + '%'; // negative here flips the y represented in the coordinate plane, to the y in px units
+    const top = offset + (adjustedAxisY * overlap * -1) + '%'; // negative here flips the y represented in the coordinate plane, to the y in px units
     return { left, top };
   }
 }
@@ -60,4 +71,7 @@ export default class Steering extends Component<SteeringProps> {
 interface SteeringProps {
   axisX: number;
   axisY: number;
+
+  analogStickSize: AnalogStickSize;
+  color: ColorOption;
 }
