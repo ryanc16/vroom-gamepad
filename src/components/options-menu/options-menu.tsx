@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useCallback, useMemo, useRef, useState } from "react";
-import { AnalogStickSize, AppOptions, ColorOption, UrlOptions } from "../../services/url-options.service";
+import { AnalogStickSize, AppOptions, ColorOption, UrlOptions, generateCustomUrl } from "../../services/url-options.service";
 import './options-menu.scss';
 
 const lettersOnly: RegExp = /^[a-zA-Z]/;
@@ -37,8 +37,8 @@ export default function OptionsMenu(props: OptionsMenuProps): React.ReactElement
   const customUrlTextAreaRef = useRef<HTMLTextAreaElement>(null);
   const [customUrlCopyBtnText, setCustomUrlCopyBtnText] = useState<string>('Copy');
 
-  const generateUrlParams = useCallback(() => {
-    const paramMap = {
+  const customUrl = useMemo(() => {
+    const paramMap: Partial<Record<UrlOptions, string | number>> = {
       [UrlOptions.wheelImgUrlKey]: formOptions.wheelImgUrl.value,
       [UrlOptions.wheelColorKey]: formOptions.wheelColor.value,
       [UrlOptions.analogStickSizeKey]: formOptions.analogStickSize.value,
@@ -46,12 +46,8 @@ export default function OptionsMenu(props: OptionsMenuProps): React.ReactElement
       [UrlOptions.analogStickFillOpacityKey]: formOptions.analogStickFillOpacity.value,
       [UrlOptions.analogStickBorderColorKey]: formOptions.analogStickBorderColor.value
     };
-    return "?" + Object.entries(paramMap).filter(([key, value]) => value != null && value !== '').map(([key, value]) => encodeURIComponent(key) + "=" + encodeURIComponent(value!)).join("&");
+    return generateCustomUrl(paramMap);
   }, [formOptions]);
-
-  const customUrl = useMemo(() => {
-    return window.location.protocol + "//" + window.location.host + generateUrlParams();
-  }, [generateUrlParams]);
 
   const copyUrlToClipboard = useCallback(() => {
     if (customUrlTextAreaRef.current != null) {

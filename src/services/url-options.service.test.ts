@@ -1,4 +1,4 @@
-import { getOptionsFromUrl } from './url-options.service';
+import { getOptionsFromUrl, generateCustomUrl, UrlOptions } from './url-options.service';
 
 describe('url-options service', () => {
 
@@ -33,5 +33,15 @@ describe('url-options service', () => {
         const options = getOptionsFromUrl();
         expect(encodedUrl).not.toEqual(customImageUrl);
         expect(options.wheelImgUrl).toEqual(customImageUrl);
+    });
+
+    it('can generate custom url', () => {
+        helpers.setUrl('http://www.website.com:3000/vroom-gamepad/www/index.html');
+        const params = {
+            [UrlOptions.analogStickFillColorKey]: 'red',
+            [UrlOptions.analogStickFillOpacityKey]: 0.4
+        };
+        const customUrl = generateCustomUrl(params);
+        expect(customUrl).toEqual('http://www.website.com:3000/vroom-gamepad/www/index.html?sf=red&so=0.4');
     });
 });
